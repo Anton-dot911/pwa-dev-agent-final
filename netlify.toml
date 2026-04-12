@@ -1,5 +1,3 @@
-# netlify.toml — PWA Dev Agent Phase 5
-
 [build]
   publish   = "dist"
   command   = "npm run build"
@@ -7,32 +5,21 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  NPM_FLAGS    = "--legacy-peer-deps"
 
-# SPA: всі маршрути → index.html
+# SPA fallback
 [[redirects]]
   from   = "/*"
   to     = "/index.html"
   status = 200
 
-# Виключення для Netlify Functions
-[[redirects]]
-  from   = "/.netlify/functions/*"
-  to     = "/.netlify/functions/:splat"
-  status = 200
-  force  = true
-
-# Заголовки безпеки
+# Security headers
 [[headers]]
   for = "/*"
   [headers.values]
     X-Frame-Options        = "DENY"
     X-Content-Type-Options = "nosniff"
-    X-XSS-Protection       = "1; mode=block"
     Referrer-Policy        = "strict-origin-when-cross-origin"
-    Permissions-Policy     = "camera=(), microphone=(), geolocation=()"
 
-# PWA: маніфест і SW без кешу
 [[headers]]
   for = "/manifest.json"
   [headers.values]
@@ -41,10 +28,9 @@
 [[headers]]
   for = "/sw.js"
   [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
+    Cache-Control          = "public, max-age=0, must-revalidate"
     Service-Worker-Allowed = "/"
 
-# Статика: довгий кеш
 [[headers]]
   for = "/assets/*"
   [headers.values]

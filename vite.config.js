@@ -8,30 +8,54 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
-      strategies: 'injectManifest',
-      srcDir: 'public',
-      filename: 'sw.js',
-      manifest: false, // використовуємо власний public/manifest.json
-      devOptions: {
-        enabled: true,
-        type: 'module',
+      // generateSW — плагін сам генерує SW, не потребує self.__WB_MANIFEST у sw.js
+      strategies: 'generateSW',
+      manifest: {
+        name: 'PWA Dev Agent',
+        short_name: 'DevAgent',
+        description: 'AI-powered PWA developer assistant with Design Engine',
+        start_url: '/',
+        display: 'standalone',
+        orientation: 'portrait-primary',
+        theme_color: '#BECAE1',
+        background_color: '#BECAE1',
+        lang: 'uk',
+        icons: [
+          { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+          { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+        ],
+        shortcuts: [
+          {
+            name: 'Новий проєкт',
+            short_name: '/new',
+            url: '/?cmd=new',
+            icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }],
+          },
+          {
+            name: 'Design Engine',
+            short_name: '/design',
+            url: '/?cmd=design',
+            icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }],
+          },
+        ],
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        navigateFallback: '/index.html',
+        navigateFallbackDenylist: [/^\/.netlify\//],
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
             handler: 'CacheFirst',
-            options: { cacheName: 'google-fonts-cache', expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 } },
-          },
-          {
-            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: { cacheName: 'gstatic-fonts-cache', expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 } },
+            options: {
+              cacheName: 'google-fonts',
+              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
+            },
           },
         ],
-        navigateFallback: '/offline.html',
-        navigateFallbackDenylist: [/^\/.netlify\//],
+      },
+      devOptions: {
+        enabled: false,
       },
     }),
   ],
@@ -40,7 +64,6 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          utils: ['jszip', 'file-saver'],
         },
       },
     },
