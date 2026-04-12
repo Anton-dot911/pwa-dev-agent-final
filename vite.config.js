@@ -8,12 +8,11 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
-      // generateSW — плагін сам генерує SW, не потребує self.__WB_MANIFEST у sw.js
       strategies: 'generateSW',
       manifest: {
         name: 'PWA Dev Agent',
         short_name: 'DevAgent',
-        description: 'AI-powered PWA developer assistant with Design Engine',
+        description: 'AI-powered PWA developer & design assistant',
         start_url: '/',
         display: 'standalone',
         orientation: 'portrait-primary',
@@ -21,26 +20,26 @@ export default defineConfig({
         background_color: '#BECAE1',
         lang: 'uk',
         icons: [
-          { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
-          { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+          {
+            src: '/icons/icon-192.svg',
+            sizes: '192x192',
+            type: 'image/svg+xml',
+            purpose: 'any maskable',
+          },
+          {
+            src: '/icons/icon-512.svg',
+            sizes: '512x512',
+            type: 'image/svg+xml',
+            purpose: 'any maskable',
+          },
         ],
         shortcuts: [
-          {
-            name: 'Новий проєкт',
-            short_name: '/new',
-            url: '/?cmd=new',
-            icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }],
-          },
-          {
-            name: 'Design Engine',
-            short_name: '/design',
-            url: '/?cmd=design',
-            icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }],
-          },
+          { name: 'Новий проєкт', short_name: '/new', url: '/?cmd=new' },
+          { name: 'Design Engine', short_name: '/design', url: '/?cmd=design' },
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        globPatterns: ['**/*.{js,css,html,svg}'],
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/.netlify\//],
         runtimeCaching: [
@@ -54,19 +53,10 @@ export default defineConfig({
           },
         ],
       },
-      devOptions: {
-        enabled: false,
-      },
+      devOptions: { enabled: false },
     }),
   ],
   build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-        },
-      },
-    },
     sourcemap: false,
     minify: 'esbuild',
   },
