@@ -25,19 +25,35 @@ export async function streamChat({ messages, systemPrompt, onChunk, onDone, onEr
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
           max_tokens: 8192,
-          stream: true,
+          stream: false,
           system: systemPrompt,
           messages,
         }),
       })
 
+      // Читаємо відповідь як текст спочатку — захист від HTML помилок
+      const rawText = await response.text()
+
       if (!response.ok) {
-        const err = await response.json()
-        throw new Error(err.error || 'Netlify Function error')
+        // Пробуємо розпарсити JSON помилку, інакше показуємо статус
+        try {
+          const err = JSON.parse(rawText)
+          throw new Error(err.error || `HTTP ${response.status}`)
+        } catch {
+          if (response.status === 404) {
+            throw new Error('Netlify Function не знайдена. Перевір що netlify/functions/claude.js є у репо та задеплоєна.')
+          }
+          throw new Error(`HTTP ${response.status}: ${rawText.slice(0, 120)}`)
+        }
       }
 
-      // Netlify Function повертає зібраний текст (не SSE потік)
-      const data = await response.json()
+      let data
+      try {
+        data = JSON.parse(rawText)
+      } catch {
+        throw new Error('Некоректна відповідь від сервера')
+      }
+
       const text = data.content?.[0]?.text || ''
 
       // Симулюємо стримінг для кращого UX
