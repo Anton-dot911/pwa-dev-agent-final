@@ -6,7 +6,7 @@ export const THEMES = {
   neumorphic: {
     name: 'Neumorphic',
     emoji: '🫧',
-    description: 'М'який об'єм, тіні всередину і назовні',
+    description: "М'який об'єм, тіні всередину і назовні",
     preview: ['#BECAE1', '#d6e4f7', '#a0b3cb'],
     tokens: (base = '#BECAE1') => {
       const r = parseInt(base.slice(1,3),16)
