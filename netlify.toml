@@ -6,6 +6,12 @@
 [build.environment]
   NODE_VERSION = "18"
 
+[functions]
+  node_bundler = "esbuild"
+
+[functions."claude"]
+  timeout = 26
+
 # SPA fallback
 [[redirects]]
   from   = "/*"
